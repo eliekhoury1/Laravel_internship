@@ -3,20 +3,34 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User; // Assuming your User model is in the "App" namespace
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use App\Models\User;
 
 class RolesAndUsersSeeder extends Seeder
 {
     public function run()
     {
-        // Create a new user with the "Super Admin" role
+        // Create permissions
+        Permission::create(['name' => 'edit articles']);
+        Permission::create(['name' => 'delete articles']);
+        Permission::create(['name' => 'publish articles']);
+        Permission::create(['name' => 'unpublish articles']);
+
+        // Create the "Super Admin" role and assign all permissions
+        $superAdminRole = Role::create(['name' => 'super-admin']);
+        $superAdminRole->givePermissionTo(Permission::all());
+
+        // Create a new user
         $user = User::create([
-            'name' => 'John', // Replace with the desired name
-            'email' => 'john@example.com', // Replace with the desired email
-            'password' => 'password', // Replace 'password' with the desired password
-            'role' => 'Super Admin',
+            'name' => 'John123', 
+            'email' => 'john123@example.com', 
+            'password' => bcrypt('password'), 
         ]);
+
+        // Assign the "Super Admin" role to the user
+        $user->assignRole('super-admin');
     }
 }
+
+
