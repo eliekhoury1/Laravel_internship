@@ -24,4 +24,13 @@ class Kernel extends ConsoleKernel
 
         require base_path('routes/console.php');
     }
+
+    protected $middlewareGroups = [
+        // ...
+        'api' => [
+            // ...
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            // ...
+        ],
+    ];
 }
