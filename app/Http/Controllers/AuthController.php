@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
-use App\Http\Controllers\AuthController;
+
 
 class AuthController extends Controller
 {
@@ -32,10 +32,11 @@ class AuthController extends Controller
 
         return response()->json(['token' => $token], 200);
     }
-    public function logout(Request $request)
+    
+    public function logout(Request $request): JsonResponse
     {
-        $request->user()->tokens()->where('name', $request->user()->currentAccessToken()->name)->delete();
-
+        $token = $request->user()->currentAccessToken();
+        $token->delete();
         return response()->json(['message' => 'Logged out successfully'], 200);
     }
 }

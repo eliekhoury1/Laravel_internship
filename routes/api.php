@@ -25,12 +25,8 @@ Route::post('/login', 'App\Http\Controllers\AuthController@login');
 Route::post('/logout', 'App\Http\Controllers\AuthController@logout')->middleware('auth:sanctum');
 
 
-
 Route::middleware('auth:sanctum')->group(function () {
-    Route::resource('users', UserController::class)->only(['index', 'show', 'store']);
+    Route::resource('users', UserController::class)->only(['index', 'show', 'store', 'update' ,'delete']);
 });
 
 
-
-Route::put('users/{user}', [UserController::class, 'update']);
-Route::delete('users/{user}', [UserController::class, 'destroy']);
