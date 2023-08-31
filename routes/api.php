@@ -26,7 +26,7 @@ Route::post('/logout', 'App\Http\Controllers\AuthController@logout')->middleware
 
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::resource('users', UserController::class)->only(['index', 'show', 'store', 'update' ,'delete']);
+    Route::resource('users', UserController::class);
 });
 
 

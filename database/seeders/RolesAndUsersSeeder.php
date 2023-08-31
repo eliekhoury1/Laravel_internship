@@ -11,27 +11,35 @@ class RolesAndUsersSeeder extends Seeder
 {
     public function run()
     {
-        // Create permissions
-        Permission::create(['name' => 'edit articles']);
-        Permission::create(['name' => 'delete articles']);
-        Permission::create(['name' => 'publish articles']);
-        Permission::create(['name' => 'unpublish articles']);
+        // Define permissions
+        Permission::updateOrCreate(['name' => 'edit articles', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'delete articles', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'publish articles', 'guard_name' => 'web']);
+        Permission::updateOrCreate(['name' => 'unpublish articles', 'guard_name' => 'web']);
 
-        // Create the "Super Admin" role and assign all permissions
-        $superAdminRole = Role::create(['name' => 'super-admin']);
-        $superAdminRole1 = Role::create(['name' => 'user']);
-        $superAdminRole->givePermissionTo(Permission::all());
+        // Define roles and their permissions
+        $roles = [
+            'super-admin' => ['edit articles', 'delete articles', 'publish articles', 'unpublish articles'],
+            'admin' => [],
+        ];
 
-        // Create a new user
-        $user = User::create([
-            'name' => 'John123', 
-            'email' => 'john123@example.com', 
-            'password' => bcrypt('password'), 
-        ]);
+        foreach ($roles as $roleName => $permissions) {
+            $role = Role::updateOrCreate(['name' => $roleName]);
+            $role->syncPermissions($permissions);
+        }
 
-        // Assign the "Super Admin" role to the user
-        $user->assignRole('super-admin');
+        // Create or update 'john123' user
+        $john123 = User::updateOrCreate(
+            ['email' => 'john1234@example.com'], // Use email as the unique identifier
+            [
+                'name' => 'John123',
+                'password' => bcrypt('password'),
+            ]
+        );
+
+        // Assign 'super-admin' role to 'john123'
+        $john123->syncRoles(['super-admin']);
+
+       
     }
 }
-
-

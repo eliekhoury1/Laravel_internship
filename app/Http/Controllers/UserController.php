@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Traits\HasRoles;
 
 class UserController extends Controller
 
@@ -33,21 +34,23 @@ class UserController extends Controller
     //}
 
     public function store(Request $request)
-{
-    $data = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:6',
-    ]);
-
-    $data['password'] = Hash::make($data['password']); // Use Hash::make for password hashing
-
-    // Use the create method to create and save the new user instance
-    User::create($data);
-
-    return response()->json(['message' => 'User created successfully'], 201);
-}
-
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+        ]);
+    
+        $data['password'] = Hash::make($data['password']); // Use Hash::make for password hashing
+    
+        // Use the create method to create and save the new user instance
+        $user = User::create($data);
+    
+        // Assign the "admin" role to the newly created user
+        $user->syncRoles(['admin']);
+    
+        return response()->json(['message' => 'User created successfully'], 201);
+    }
 
     public function index()
     {
