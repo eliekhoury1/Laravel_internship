@@ -39,15 +39,22 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
+            'role' => 'string|in:admin,user', // Define allowed role values here
         ]);
     
         $data['password'] = Hash::make($data['password']); // Use Hash::make for password hashing
     
-        // Use the create method to create and save the new user instance
-        $user = User::create($data);
+        // Create the new user
+        $user = User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ]);
     
-        // Assign the "admin" role to the newly created user
-        $user->syncRoles(['admin']);
+        // Assign the role to the new user
+        if (isset($data['role'])) {
+            $user->assignRole($data['role']);
+        }
     
         return response()->json(['message' => 'User created successfully'], 201);
     }

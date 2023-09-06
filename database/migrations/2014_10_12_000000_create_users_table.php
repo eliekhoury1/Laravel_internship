@@ -22,7 +22,7 @@ return new class extends Migration
             $table->timestamps();
     
             // Add the new column
-            $table->string('role')->default('User'); // Assuming 'User' is the default role
+           // $table->string('role')->default('User'); // Assuming 'User' is the default role
         });
     }
 

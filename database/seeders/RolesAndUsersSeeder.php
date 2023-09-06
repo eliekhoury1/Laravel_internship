@@ -1,7 +1,6 @@
 <?php
 
 namespace Database\Seeders;
-
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -21,6 +20,7 @@ class RolesAndUsersSeeder extends Seeder
         $roles = [
             'super-admin' => ['edit articles', 'delete articles', 'publish articles', 'unpublish articles'],
             'admin' => [],
+            'user' => [],
         ];
 
         foreach ($roles as $roleName => $permissions) {
@@ -28,7 +28,7 @@ class RolesAndUsersSeeder extends Seeder
             $role->syncPermissions($permissions);
         }
 
-        // Create or update 'john123' user
+        // Create or update 'john123' user with 'super-admin' role
         $john123 = User::updateOrCreate(
             ['email' => 'john1234@example.com'], // Use email as the unique identifier
             [
@@ -37,9 +37,19 @@ class RolesAndUsersSeeder extends Seeder
             ]
         );
 
-        // Assign 'super-admin' role to 'john123'
-        $john123->syncRoles(['super-admin']);
+        // Fetch the "admin" role using its name
+        $adminRole = Role::findByName('admin');
 
-       
+        // Assign 'admin' role to the new users
+        $newAdmin = User::updateOrCreate(
+            ['email' => 'admin@example.com'],
+            [
+                'name' => 'AdminUser',
+                'password' => bcrypt('password'),
+            ]
+        );
+        
+        // Assign 'admin' role to the new users
+        $newAdmin->syncRoles([$adminRole]);
     }
 }
