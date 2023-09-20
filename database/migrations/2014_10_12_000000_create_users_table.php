@@ -21,8 +21,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
     
-            // Add the new column
-           // $table->string('role')->default('User'); // Assuming 'User' is the default role
+          
         });
     }
 

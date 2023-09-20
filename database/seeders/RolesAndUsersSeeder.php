@@ -11,16 +11,15 @@ class RolesAndUsersSeeder extends Seeder
     public function run()
     {
         // Define permissions
-        Permission::updateOrCreate(['name' => 'edit articles', 'guard_name' => 'web']);
-        Permission::updateOrCreate(['name' => 'delete articles', 'guard_name' => 'web']);
-        Permission::updateOrCreate(['name' => 'publish articles', 'guard_name' => 'web']);
-        Permission::updateOrCreate(['name' => 'unpublish articles', 'guard_name' => 'web']);
+        Permission::create(['name' => 'edit articles', 'guard_name' => 'web']);
+        Permission::create(['name' => 'delete articles', 'guard_name' => 'web']);
+        Permission::create(['name' => 'publish articles', 'guard_name' => 'web']);
+        Permission::create(['name' => 'unpublish articles', 'guard_name' => 'web']);
 
         // Define roles and their permissions
         $roles = [
-            'super-admin' => ['edit articles', 'delete articles', 'publish articles', 'unpublish articles'],
+            'super-admin' => [],
             'admin' => [],
-            'user' => [],
         ];
 
         foreach ($roles as $roleName => $permissions) {
@@ -28,19 +27,21 @@ class RolesAndUsersSeeder extends Seeder
             $role->syncPermissions($permissions);
         }
 
-        // Create or update 'john123' user with 'super-admin' role
-        $john123 = User::updateOrCreate(
-            ['email' => 'john1234@example.com'], // Use email as the unique identifier
+    
+        $spadmin = User::updateOrCreate(
+            ['email' => 'superAdmin@gmail.com'], 
             [
-                'name' => 'John123',
+                'name' => 'super admin',
                 'password' => bcrypt('password'),
             ]
         );
 
-        // Fetch the "admin" role using its name
+  
         $adminRole = Role::findByName('admin');
 
-        // Assign 'admin' role to the new users
+        $spadminRole = Role::findByName('super-admin');
+
+      
         $newAdmin = User::updateOrCreate(
             ['email' => 'admin@example.com'],
             [
@@ -51,5 +52,6 @@ class RolesAndUsersSeeder extends Seeder
         
         // Assign 'admin' role to the new users
         $newAdmin->syncRoles([$adminRole]);
+        $spadmin->syncRoles([$spadminRole]);
     }
 }

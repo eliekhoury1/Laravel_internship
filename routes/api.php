@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ProductController;
+
 
 
 /*
@@ -17,7 +20,11 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::middleware(['auth:sanctum', 'super-admin'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
@@ -29,4 +36,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('users', UserController::class);
 });
 
+//Route::apiResource('categories', 'CategoryController');
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::resource('categories', CategoryController::class);
+});
+
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::resource('products', ProductController::class);
+});

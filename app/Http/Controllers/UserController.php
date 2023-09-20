@@ -39,7 +39,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'role' => 'string|in:admin,user', // Define allowed role values here
+            'role' => 'required|string|in:admin', // Define allowed role values here
         ]);
     
         $data['password'] = Hash::make($data['password']); // Use Hash::make for password hashing
@@ -85,19 +85,25 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        // Validate request data
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'required|min:6',
-        ]);
+    // Validate request data
+    $data = $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email,' . $user->id,
+        'password' => 'required|min:6',
+        'role' => 'required|in:admin,super-admin', // Add a role field to your validation rules
+    ]);
 
-        $data['password'] = bcrypt($data['password']);
+    $data['password'] = bcrypt($data['password']);
 
-        // Update user data
-        $user->update($data);
+    // Update user data
+    $user->update($data);
 
-        return response()->json(['message' => 'User updated successfully'], Response::HTTP_OK);
+    // Assign roles based on the 'role' field in the request
+    if ($request->has('role')) {
+        $user->syncRoles([$data['role']]);
+    }
+
+    return response()->json(['message' => 'User updated successfully'], Response::HTTP_OK);
     }
 
     public function destroy(User $user)
