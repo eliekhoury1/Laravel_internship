@@ -19,13 +19,12 @@ use App\Http\Controllers\ProductController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
-
-Route::middleware(['auth:sanctum', 'super-admin'])->get('/user', function (Request $request) {
-    return $request->user();
+//Role in middleware
+//
+Route::group(['middleware' => ['role:super-admin']], function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 });
 
 Route::post('/login', 'App\Http\Controllers\AuthController@login');
@@ -36,13 +35,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::resource('users', UserController::class);
 });
 
-//Route::apiResource('categories', 'CategoryController');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::resource('categories', CategoryController::class);
-});
-
-
-Route::middleware('auth:sanctum')->group(function () {
     Route::resource('products', ProductController::class);
 });

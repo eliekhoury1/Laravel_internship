@@ -15,23 +15,7 @@ class UserController extends Controller
 
 
 {
-   // public function store(Request $request)
-    //{
-    //    $data = $request->validate([
-     //       'name' => 'required|string|max:255',
-      //      'email' => 'required|email|unique:users',
-       //     'password' => 'required|min:6',
-       // ]);
-
-       // $data['password'] = bcrypt($data['password']);
-
-        
-        // Create a new user instance and save it
-       /// $user = new User($data);
-        //$user->save();
-
-        //return response()->json(['message' => 'User created successfully'], 201);
-    //}
+   
 
     public function store(Request $request)
     {
@@ -39,7 +23,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
-            'role' => 'required|string|in:admin', // Define allowed role values here
+            'role' => 'required|string|in:admin,super-admin', // Define allowed role values here
         ]);
     
         $data['password'] = Hash::make($data['password']); // Use Hash::make for password hashing

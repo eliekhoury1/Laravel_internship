@@ -14,10 +14,17 @@ use Spatie\Permission\Traits\HasRoles;
 
 class CategoryController extends Controller
 {
+   
+
     public function index()
     {
-        $categories = Category::all();
-        return response()->json(['categories' => $categories], 200);
+        $categories = QueryBuilder::for(Category::class)
+            ->allowedFilters(['name'])
+            ->allowedSorts(['name'])
+            ->defaultSort('name') // Set the default sort order for categories
+            ->paginate(10);
+
+        return response()->json(['data' => $categories], Response::HTTP_OK);
     }
 
     public function store(Request $request)
