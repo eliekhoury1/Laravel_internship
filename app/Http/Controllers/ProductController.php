@@ -12,22 +12,27 @@ use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
+
 
 class ProductController extends Controller
 {
     
     public function index()
     {
-        $products = QueryBuilder::for(Product::class)
-            ->allowedFilters(['name', 'description', 'price'])
-            ->allowedSorts(['name', 'price'])
-            ->defaultSort('name') // Set the default sort order for products
-            ->paginate(10);
+        $products = Cache::remember('products', 60, function () {
+            return QueryBuilder::for(Product::class)
+                ->allowedFilters(['name', 'description', 'price'])
+                ->allowedSorts(['name', 'price'])
+                ->defaultSort('name')
+                ->paginate(10);
+        });
 
         return response()->json(['data' => $products], Response::HTTP_OK);
     }
 
-    
+
+
     public function store(Request $request)
     {
         $request->validate([

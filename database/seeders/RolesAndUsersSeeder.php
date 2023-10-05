@@ -28,5 +28,14 @@ class RolesAndUsersSeeder extends Seeder
             'password' => bcrypt('password'),
         ]
     );
+
+
+
+            // Assign 'super-admin' role to the 'super admin' user
+            $superAdminRole = Role::findByName('super-admin');
+            $User->assignRole($superAdminRole);
+
+
+
     }
 }

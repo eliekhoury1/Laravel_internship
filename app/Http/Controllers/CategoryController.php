@@ -11,6 +11,10 @@ use Illuminate\Http\JsonResponse;
 use Spatie\QueryBuilder\QueryBuilder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Traits\HasRoles;
+use App\Exports\CategoriesExport;
+use Maatwebsite\Excel\Facades\Excel; 
+use App\Imports\CategoriesImport;
+
 
 class CategoryController extends Controller
 {
@@ -60,4 +64,24 @@ class CategoryController extends Controller
 
         return response()->json(['message' => 'Category deleted successfully'], 204);
     }
+
+
+
+    public function exportCategories()
+{
+    Excel::store(new CategoriesExport, 'categories.xlsx', 'local');
+    return response()->json(['message' => 'Categories exported successfully']);
+}
+
+       
+    public function importCategories(Request $request)
+    {
+        $file = $request->file('file');
+
+        Excel::import(new CategoriesImport, $file);
+
+        return response()->json(['message' => 'Categories imported successfully']);
+    }
+
+
 }

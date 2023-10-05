@@ -31,12 +31,13 @@ Route::post('/login', 'App\Http\Controllers\AuthController@login');
 Route::post('/logout', 'App\Http\Controllers\AuthController@logout')->middleware('auth:sanctum');
 
 
-Route::middleware('auth:sanctum')->group(function () {
+
+Route::middleware(['super-admin', 'throttle'])->group(function () {
+    Route::resource('categories', CategoryController::class);
+    Route::resource('products', ProductController::class);
     Route::resource('users', UserController::class);
 });
 
-
-Route::middleware('auth:sanctum')->group(function () {
-    Route::resource('categories', CategoryController::class);
-    Route::resource('products', ProductController::class);
-});
+//Route::get('/export-categories', 'App\Http\Controllers\CategoryController@exportCategories');
+Route::get('/export-categories', [CategoryController::class, 'exportCategories']);
+Route::post('/import-categories', [CategoryController::class, 'importCategories']);
